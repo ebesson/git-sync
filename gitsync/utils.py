@@ -8,5 +8,5 @@ def read_projects_from_json(projects_file):
         with open(file_handler) as json_file:
             projects = json.load(json_file)
     except Exception as e:
-        return False
+        raise Exception("Invalid json file...")
     return projects
