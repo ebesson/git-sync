@@ -1,4 +1,5 @@
-Git-sync
+# Git-sync
+
 ### REQUIREMENTS
 
 ### INSTALL
