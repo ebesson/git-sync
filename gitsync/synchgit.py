@@ -1,29 +1,18 @@
 from git import Repo
-from model import Project
 import os
 from PyGitUp.git_wrapper import GitError
 from PyGitUp.gitup import GitUp
 from termcolor import cprint
-from utils import read_projects_from_json
-
-
-GITSYNC_FILE = "git-sync.json"
 
 
 class GitSync(object):
-    def __init__(self):
-        self.current_directory = os.getcwd()
+
+    def __init__(self, current_directory, projects_provider):
+        self.current_directory = current_directory
+        self.projects = projects_provider.projects()
 
     def sync_all(self):
-
-        gitsync_path = os.path.join(self.current_directory, GITSYNC_FILE)
-        if not os.path.isfile(gitsync_path):
-            raise Exception("No such file projects.json in current directory")
-
-        json_projects = read_projects_from_json(GITSYNC_FILE)
-        projects = list(map(lambda json_project: Project(json_project),
-                       json_projects))
-        return list(map(lambda project: self.proccess(project), projects))
+        return list(map(lambda project: self.proccess(project), self.projects))
 
     def _display_info(self, message, attrs=None):
         cprint(text=message, color='green', attrs=attrs)
@@ -32,7 +21,7 @@ class GitSync(object):
         cprint(text=message, color='red', attrs=['bold'])
 
     def proccess(self, project):
-        self._display_info("=> Process project %s" % project.name,
+        self._display_info("\n => Process project %s" % project.name,
                            attrs=['bold'])
 
         if not os.path.isdir(project.path):
@@ -49,7 +38,7 @@ class GitSync(object):
         try:
             self.sync(project)
             self._display_info(" - Update successfull")
-        except:
+        except Exception:
             self._display_error("An error occurred during update")
         finally:
             os.chdir(self.current_directory)
@@ -59,5 +48,5 @@ class GitSync(object):
         os.chdir(project.path)
         try:
             GitUp().run()
-        except GitError as e:
+        except GitError:
             raise Exception("An error occurred during update")

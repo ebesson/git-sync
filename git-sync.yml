@@ -1,0 +1,11 @@
+- name: git-sync
+  path: /tmp/test
+  url: https://github.com/ebesson/git-sync
+
+- name: git-sync 2
+  path: /tmp/test2
+  url: https://github.com/ebesson/git-sync
+
+- name: git-sync 3
+  path: /tmp/test3
+  url: https://github.com/ebesson/git-sync
