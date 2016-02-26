@@ -10,8 +10,8 @@ class GithubProvider(Provider):
     def __init__(self, user):
         super(Provider, self).__init__()
         self.user = user
-        passw = getpass.getpass('Your github password:')
-        self.github = Github(user, passw)
+        password = getpass.getpass('Your github password:')
+        self.github = Github(self.user, password)
 
     def projects(self):
         repositories = self.github.get_user().get_repos()
