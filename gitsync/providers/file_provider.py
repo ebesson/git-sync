@@ -37,12 +37,13 @@ class FileProvider(Provider):
         except Exception:
             raise Exception("Invalid yaml file...")
 
-        if 'projects' in raw_projects.keys():
-            projects.extend(raw_projects['projects'])
-
-        if 'projects_files' in raw_projects.keys():
-            for project in raw_projects['projects_files']:
-                projects.extend(project)
+        for raw_project in raw_projects:
+            if raw_project.get('projects'):
+                projects.extend(raw_project['projects'])
+            elif raw_project.get('projects_files'):
+                projects.extend(raw_project['projects_files'])
+            else:
+                projects.append(raw_project)
 
         return projects
 
