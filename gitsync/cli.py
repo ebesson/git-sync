@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import argparse
+import getpass
 import os
 import sys
 
@@ -21,6 +22,12 @@ def parse_args():
         dest='repository_provider',
         default="file",
         help='git-sync provider: github, file (default)'
+
+    parser.add_argument(
+        '--workspace',
+        dest='workspace',
+        default="/tmp",
+        help='Working directory'
     )
 
     parser.add_argument(
@@ -39,7 +46,8 @@ def main():
 
         if args.repository_provider == 'github':
             if args.github_username:
-                repository_provider = GithubProvider(args.github_username)
+                password = getpass.getpass('Your Github password:')
+                repository_provider = GithubProvider(args.github_username, password, args.workspace)
             else:
                 raise ValueError("Unkown github username")
 
