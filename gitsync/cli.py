@@ -71,12 +71,15 @@ def main():
                 raise ValueError("Unkown github username")
 
         if args.repository_provider == 'tuleap':
-            if args.tuleap_username:
-                password = getpass.getpass('Your Tuleap password:')
-                repository_provider = TuleapProvider(args.tuleap_host, args.tuleap_username,
-                                                     password, args.tuleap_project, args.workspace)
-            else:
+            if not args.tuleap_username:
                 raise ValueError("Unkown tuleap username")
+
+            password = os.getenv("GITSYNC_TULEAP_PASSWORD")
+            if password is None:
+                password = getpass.getpass('Your Tuleap password:')
+
+            repository_provider = TuleapProvider(args.tuleap_host, args.tuleap_username,
+                                                 password, args.tuleap_project, args.workspace)
 
         GitSync(os.getcwd(), repository_provider).sync_all()
 
