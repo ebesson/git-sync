@@ -6,6 +6,7 @@ import sys
 
 from termcolor import cprint
 from gitsync.providers.github_provider import GithubProvider
+from gitsync.providers.gitlab_provider import GitlabProvider
 from gitsync.providers.tuleap_provider import TuleapProvider
 
 from gitsync.providers.file_provider import FileProvider
@@ -21,7 +22,7 @@ def parse_args():
         '--provider',
         dest='repository_provider',
         default="file",
-        help='git-sync provider: github, tuleap, file (default)'
+        help='git-sync provider: gitlab, github, tuleap, file (default)'
     )
 
     parser.add_argument(
@@ -44,6 +45,18 @@ def parse_args():
     )
 
     parser.add_argument(
+        '--gitlab.url',
+        dest='gitlab_url',
+        help='Gitlab url'
+    )
+
+    parser.add_argument(
+        '--gitlab.token',
+        dest='gitlab_token',
+        help='Gitlab token'
+    )
+
+    parser.add_argument(
         '--tuleap.username',
         dest='tuleap_username',
         help='Tuleap username'
@@ -63,12 +76,17 @@ def main():
         args = parse_args()
         repository_provider = FileProvider()
 
+        if args.repository_provider == 'gitlab':
+            gitlab_url = 'https://gitlab.com'
+            if args.gitlab_url:
+                gitlab_url = args.gitlab_url
+
+            repository_provider = GitlabProvider(gitlab_url, args.gitlab_token, args.workspace)
+
         if args.repository_provider == 'github':
             if args.github_username:
                 password = getpass.getpass('Your Github password:')
                 repository_provider = GithubProvider(args.github_username, password, args.workspace)
-            else:
-                raise ValueError("Unkown github username")
 
         if args.repository_provider == 'tuleap':
             if not args.tuleap_username:
