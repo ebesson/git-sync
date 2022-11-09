@@ -1,7 +1,5 @@
 import argparse
 import gitsync.cli
-import ptvsd
-import time
 
 
 def main():
